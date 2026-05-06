@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import uz.esoft.dailytasks.data.TaskRepository
 import uz.esoft.dailytasks.model.Task
+import java.time.Instant
 import java.time.LocalDate
 
 data class TodayUiState(
@@ -62,6 +63,19 @@ class TodayViewModel(
     fun deleteTask(taskId: Long) {
         viewModelScope.launch {
             taskRepository.deleteById(taskId)
+        }
+    }
+
+    fun setReminderIn(taskId: Long, minutes: Long) {
+        viewModelScope.launch {
+            val remindAt = Instant.now().plusSeconds(minutes * 60)
+            taskRepository.setReminderAt(taskId, remindAt)
+        }
+    }
+
+    fun clearReminder(taskId: Long) {
+        viewModelScope.launch {
+            taskRepository.clearReminder(taskId)
         }
     }
 }

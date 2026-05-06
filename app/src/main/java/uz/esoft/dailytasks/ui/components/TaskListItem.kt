@@ -10,12 +10,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,9 +37,13 @@ fun TaskListItem(
     task: Task,
     onClick: (Long) -> Unit,
     onCheckedChange: (Long, Boolean) -> Unit,
+    onSetReminderInMinutes: (Long, Long) -> Unit,
+    onClearReminder: (Long) -> Unit,
     onDelete: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var menuExpanded by remember { mutableStateOf(false) }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -79,8 +90,56 @@ fun TaskListItem(
 
         Spacer(Modifier.width(4.dp))
 
-        IconButton(onClick = { onDelete(task.id) }) {
-            Icon(Icons.Outlined.Delete, contentDescription = "O‘chirish")
+        IconButton(onClick = { menuExpanded = true }) {
+            Icon(Icons.Outlined.MoreVert, contentDescription = "Menyu")
+        }
+
+        DropdownMenu(
+            expanded = menuExpanded,
+            onDismissRequest = { menuExpanded = false },
+        ) {
+            DropdownMenuItem(
+                text = { Text("Tahrirlash") },
+                onClick = {
+                    menuExpanded = false
+                    onClick(task.id)
+                },
+            )
+
+            DropdownMenuItem(
+                text = { Text("Eslatma: 10 daq") },
+                onClick = {
+                    menuExpanded = false
+                    onSetReminderInMinutes(task.id, 10)
+                },
+            )
+
+            DropdownMenuItem(
+                text = { Text("Eslatma: 30 daq") },
+                onClick = {
+                    menuExpanded = false
+                    onSetReminderInMinutes(task.id, 30)
+                },
+            )
+
+            if (task.hasReminder) {
+                DropdownMenuItem(
+                    text = { Text("Eslatmani o‘chirish") },
+                    onClick = {
+                        menuExpanded = false
+                        onClearReminder(task.id)
+                    },
+                )
+            }
+
+            DropdownMenuItem(
+                text = { Text("O‘chirish") },
+                leadingIcon = { Icon(Icons.Outlined.Delete, contentDescription = null) },
+                onClick = {
+                    menuExpanded = false
+                    onDelete(task.id)
+                },
+            )
         }
     }
 }

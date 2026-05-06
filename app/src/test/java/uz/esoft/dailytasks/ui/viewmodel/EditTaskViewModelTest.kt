@@ -63,6 +63,16 @@ private class FakeTaskRepository : TaskRepository {
 
     override suspend fun setCompleted(id: Long, completed: Boolean, completedAt: Instant) = Unit
 
+    override fun observeNextPendingReminder(): Flow<Task?> = flowOf(null)
+
+    override suspend fun setReminderAt(taskId: Long, remindAt: Instant?) = Unit
+
+    override suspend fun clearReminder(taskId: Long) = Unit
+
+    override suspend fun markReminderFired(taskId: Long, firedAt: Instant) = Unit
+
+    override suspend fun snoozeReminder(taskId: Long, minutes: Long) = Unit
+
     override fun observeCompletedCountBetween(start: Instant, end: Instant): Flow<Int> = flowOf(0)
 
     override fun observePlannedCountBetween(startDay: LocalDate, endDay: LocalDate): Flow<Int> = flowOf(0)

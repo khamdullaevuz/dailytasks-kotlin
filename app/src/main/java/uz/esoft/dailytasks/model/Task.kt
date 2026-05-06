@@ -13,7 +13,11 @@ data class Task(
     val dueDate: LocalDate?,
     val createdAt: Instant,
     val completedAt: Instant?,
+    val remindAt: Instant?,
+    val reminderFiredAt: Instant?,
 ) {
     val isCompleted: Boolean get() = completedAt != null
+
+    val hasReminder: Boolean get() = remindAt != null
 }
 

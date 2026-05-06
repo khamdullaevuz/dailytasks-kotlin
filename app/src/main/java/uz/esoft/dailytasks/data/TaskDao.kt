@@ -72,6 +72,27 @@ interface TaskDao {
 
     @Query(
         """
+        SELECT * FROM tasks
+        WHERE completedAtEpochMs IS NULL
+          AND remindAtEpochMs IS NOT NULL
+          AND reminderFiredAtEpochMs IS NULL
+        ORDER BY remindAtEpochMs ASC
+        LIMIT 1
+        """,
+    )
+    fun observeNextPendingReminder(): Flow<TaskEntity?>
+
+    @Query("UPDATE tasks SET reminderFiredAtEpochMs = :firedAtEpochMs WHERE id = :id")
+    suspend fun setReminderFiredAt(id: Long, firedAtEpochMs: Long?)
+
+    @Query("UPDATE tasks SET remindAtEpochMs = :remindAtEpochMs, reminderFiredAtEpochMs = NULL WHERE id = :id")
+    suspend fun setReminderAt(id: Long, remindAtEpochMs: Long?)
+
+    @Query("UPDATE tasks SET remindAtEpochMs = NULL, reminderFiredAtEpochMs = NULL WHERE id = :id")
+    suspend fun clearReminder(id: Long)
+
+    @Query(
+        """
         SELECT COUNT(*) FROM tasks
         WHERE completedAtEpochMs IS NOT NULL
           AND completedAtEpochMs BETWEEN :startEpochMs AND :endEpochMs

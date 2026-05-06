@@ -9,6 +9,7 @@ import androidx.room.PrimaryKey
     indices = [
         Index(value = ["dueDateEpochDay"]),
         Index(value = ["completedAtEpochMs"]),
+        Index(value = ["remindAtEpochMs"]),
     ],
 )
 data class TaskEntity(
@@ -21,5 +22,10 @@ data class TaskEntity(
     val createdAtEpochMs: Long,
     /** Nullable -> task is not completed yet. */
     val completedAtEpochMs: Long?,
+
+    /** Nullable -> no reminder. Works only while app is running (in-app reminder). */
+    val remindAtEpochMs: Long?,
+    /** Nullable -> reminder has not been fired yet. */
+    val reminderFiredAtEpochMs: Long?,
 )
 

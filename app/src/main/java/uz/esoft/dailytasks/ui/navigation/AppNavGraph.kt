@@ -16,12 +16,16 @@ import uz.esoft.dailytasks.ui.viewmodel.PlanViewModel
 import uz.esoft.dailytasks.ui.viewmodel.StatsViewModel
 import uz.esoft.dailytasks.ui.viewmodel.TodayViewModel
 
-fun NavGraphBuilder.appNavGraph(navController: NavController) {
+fun NavGraphBuilder.appNavGraph(
+    navController: NavController,
+    onOpenDrawer: () -> Unit,
+) {
     composable(route = AppDestination.Today.route) {
         val vm: TodayViewModel = viewModel(factory = AppViewModelProvider.Factory)
         TodayScreen(
             viewModel = vm,
             onEditTask = { id -> navController.navigate(AppDestination.EditTask.createRoute(id)) },
+            onOpenDrawer = onOpenDrawer,
         )
     }
 
@@ -30,12 +34,16 @@ fun NavGraphBuilder.appNavGraph(navController: NavController) {
         PlanScreen(
             viewModel = vm,
             onEditTask = { id -> navController.navigate(AppDestination.EditTask.createRoute(id)) },
+            onOpenDrawer = onOpenDrawer,
         )
     }
 
     composable(route = AppDestination.Stats.route) {
         val vm: StatsViewModel = viewModel(factory = AppViewModelProvider.Factory)
-        StatsScreen(viewModel = vm)
+        StatsScreen(
+            viewModel = vm,
+            onOpenDrawer = onOpenDrawer,
+        )
     }
 
     composable(

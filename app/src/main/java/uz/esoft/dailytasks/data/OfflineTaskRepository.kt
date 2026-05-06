@@ -46,6 +46,27 @@ class OfflineTaskRepository(
         taskDao.setCompletedAt(id, completedAtEpochMs = if (completed) completedAt.toEpochMilli() else null)
     }
 
+    override fun observeNextPendingReminder(): Flow<Task?> {
+        return taskDao.observeNextPendingReminder().map { it?.toModel() }
+    }
+
+    override suspend fun setReminderAt(taskId: Long, remindAt: Instant?) {
+        taskDao.setReminderAt(taskId, remindAtEpochMs = remindAt?.toEpochMilli())
+    }
+
+    override suspend fun clearReminder(taskId: Long) {
+        taskDao.clearReminder(taskId)
+    }
+
+    override suspend fun markReminderFired(taskId: Long, firedAt: Instant) {
+        taskDao.setReminderFiredAt(taskId, firedAtEpochMs = firedAt.toEpochMilli())
+    }
+
+    override suspend fun snoozeReminder(taskId: Long, minutes: Long) {
+        val newTime = Instant.now().plusSeconds(minutes * 60)
+        taskDao.setReminderAt(taskId, remindAtEpochMs = newTime.toEpochMilli())
+    }
+
     override fun observeCompletedCountBetween(start: Instant, end: Instant): Flow<Int> {
         return taskDao.observeCompletedCountBetween(start.toEpochMilli(), end.toEpochMilli())
     }
@@ -63,6 +84,8 @@ private fun TaskEntity.toModel(): Task {
         dueDate = dueDateEpochDay?.let(LocalDate::ofEpochDay),
         createdAt = Instant.ofEpochMilli(createdAtEpochMs),
         completedAt = completedAtEpochMs?.let(Instant::ofEpochMilli),
+        remindAt = remindAtEpochMs?.let(Instant::ofEpochMilli),
+        reminderFiredAt = reminderFiredAtEpochMs?.let(Instant::ofEpochMilli),
     )
 }
 
@@ -74,6 +97,8 @@ private fun Task.toEntity(): TaskEntity {
         dueDateEpochDay = dueDate?.toEpochDay(),
         createdAtEpochMs = createdAt.toEpochMilli(),
         completedAtEpochMs = completedAt?.toEpochMilli(),
+        remindAtEpochMs = remindAt?.toEpochMilli(),
+        reminderFiredAtEpochMs = reminderFiredAt?.toEpochMilli(),
     )
 }
 

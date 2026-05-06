@@ -18,6 +18,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -99,6 +103,43 @@ fun EditTaskScreen(
 
             Text(
                 text = "Vazifani bajarilgandan so‘ng ro‘yxatda belgilash (checkbox) orqali monitoring qilinadi.",
+                style = MaterialTheme.typography.bodySmall,
+            )
+
+            // In-app reminder controls (no background services)
+            val remindLabel = state.remindAt?.let { instant ->
+                val local = instant.atZone(zoneId).toLocalDateTime()
+                "${local.toLocalDate()} ${local.toLocalTime().withSecond(0).withNano(0)}"
+            } ?: "Yo‘q"
+
+            Text(
+                text = "Eslatma (faqat ilova ichida): $remindLabel",
+                style = MaterialTheme.typography.titleSmall,
+            )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Button(onClick = { viewModel.setReminderIn(10) }) { Text("10 daq") }
+                Button(onClick = { viewModel.setReminderIn(30) }) { Text("30 daq") }
+                Button(onClick = { viewModel.setReminderIn(60) }) { Text("1 soat") }
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            ) {
+                OutlinedButton(
+                    onClick = { viewModel.clearReminder() },
+                    enabled = state.remindAt != null,
+                ) {
+                    Text("Eslatmani o‘chirish")
+                }
+                Spacer(Modifier.width(4.dp))
+            }
+
+            Text(
+                text = "Eslatma ilova yopiq bo‘lsa ishlamaydi (servis/WorkManager ishlatilmagan).",
                 style = MaterialTheme.typography.bodySmall,
             )
         }

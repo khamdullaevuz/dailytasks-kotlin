@@ -17,6 +17,14 @@ interface TaskRepository {
 
     suspend fun setCompleted(id: Long, completed: Boolean, completedAt: Instant = Instant.now())
 
+    /** In-app only: emits the next task that should trigger a reminder (works only while app is open). */
+    fun observeNextPendingReminder(): Flow<Task?>
+
+    suspend fun setReminderAt(taskId: Long, remindAt: Instant?)
+    suspend fun clearReminder(taskId: Long)
+    suspend fun markReminderFired(taskId: Long, firedAt: Instant = Instant.now())
+    suspend fun snoozeReminder(taskId: Long, minutes: Long)
+
     fun observeCompletedCountBetween(start: Instant, end: Instant): Flow<Int>
     fun observePlannedCountBetween(startDay: LocalDate, endDay: LocalDate): Flow<Int>
 }

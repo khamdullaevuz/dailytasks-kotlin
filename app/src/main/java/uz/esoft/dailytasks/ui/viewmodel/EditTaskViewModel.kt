@@ -18,6 +18,8 @@ data class EditTaskUiState(
     val title: String = "",
     val description: String = "",
     val dueDate: LocalDate? = null,
+    val remindAt: Instant? = null,
+    val reminderFiredAt: Instant? = null,
     val isLoading: Boolean = false,
 ) {
     val canSave: Boolean get() = title.isNotBlank()
@@ -44,6 +46,8 @@ class EditTaskViewModel(
                         title = task?.title.orEmpty(),
                         description = task?.description.orEmpty(),
                         dueDate = task?.dueDate,
+                        remindAt = task?.remindAt,
+                        reminderFiredAt = task?.reminderFiredAt,
                         isLoading = false,
                     )
                 }
@@ -63,6 +67,15 @@ class EditTaskViewModel(
         _uiState.update { it.copy(dueDate = value) }
     }
 
+    fun setReminderIn(minutes: Long) {
+        val newTime = Instant.now().plusSeconds(minutes * 60)
+        _uiState.update { it.copy(remindAt = newTime, reminderFiredAt = null) }
+    }
+
+    fun clearReminder() {
+        _uiState.update { it.copy(remindAt = null, reminderFiredAt = null) }
+    }
+
     fun save(onSaved: (Long) -> Unit) {
         val state = _uiState.value
         if (!state.canSave) return
@@ -76,6 +89,8 @@ class EditTaskViewModel(
                 dueDate = state.dueDate,
                 createdAt = existing?.createdAt ?: Instant.now(),
                 completedAt = existing?.completedAt,
+                remindAt = state.remindAt,
+                reminderFiredAt = state.reminderFiredAt,
             )
             val id = taskRepository.upsert(task)
             onSaved(id)
