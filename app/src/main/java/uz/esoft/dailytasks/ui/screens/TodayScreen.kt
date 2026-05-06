@@ -87,6 +87,13 @@ fun TodayScreen(
                             onDismissRequest = { menuExpanded = false },
                         ) {
                             DropdownMenuItem(
+                                text = { Text("Ma'lumotlarni yangilash (mock API)") },
+                                onClick = {
+                                    menuExpanded = false
+                                    viewModel.refreshFromRemote()
+                                },
+                            )
+                            DropdownMenuItem(
                                 text = { Text("Bugunga qaytish") },
                                 onClick = {
                                     menuExpanded = false
@@ -199,4 +206,3 @@ private fun androidx.compose.foundation.lazy.LazyListScope.section(
         )
     }
 }
-

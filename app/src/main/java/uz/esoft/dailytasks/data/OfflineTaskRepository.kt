@@ -5,9 +5,12 @@ import kotlinx.coroutines.flow.map
 import uz.esoft.dailytasks.model.Task
 import java.time.Instant
 import java.time.LocalDate
+import uz.esoft.dailytasks.data.remote.TasksApi
+import uz.esoft.dailytasks.data.remote.toEntity
 
 class OfflineTaskRepository(
     private val taskDao: TaskDao,
+    private val tasksApi: TasksApi?,
 ) : TaskRepository {
 
     override fun observeTasksForDay(day: LocalDate): Flow<List<Task>> {
@@ -40,6 +43,12 @@ class OfflineTaskRepository(
 
     override suspend fun deleteById(id: Long) {
         taskDao.deleteById(id)
+    }
+
+    override suspend fun refreshFromRemote() {
+        val api = tasksApi ?: return
+        val remoteTasks = api.getTasks()
+        taskDao.insertAll(remoteTasks.map { it.toEntity() })
     }
 
     override suspend fun setCompleted(id: Long, completed: Boolean, completedAt: Instant) {
@@ -101,4 +110,3 @@ private fun Task.toEntity(): TaskEntity {
         reminderFiredAtEpochMs = reminderFiredAt?.toEpochMilli(),
     )
 }
-

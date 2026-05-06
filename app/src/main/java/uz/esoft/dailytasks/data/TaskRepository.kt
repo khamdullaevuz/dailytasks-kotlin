@@ -15,6 +15,9 @@ interface TaskRepository {
     suspend fun upsert(task: Task): Long
     suspend fun deleteById(id: Long)
 
+    /** Pulls tasks from the mock REST API and stores them in Room. */
+    suspend fun refreshFromRemote()
+
     suspend fun setCompleted(id: Long, completed: Boolean, completedAt: Instant = Instant.now())
 
     /** In-app only: emits the next task that should trigger a reminder (works only while app is open). */

@@ -49,6 +49,12 @@ class PlanViewModel(
         }
     }
 
+    fun refreshFromRemote() {
+        viewModelScope.launch {
+            taskRepository.refreshFromRemote()
+        }
+    }
+
     fun setReminderIn(taskId: Long, minutes: Long) {
         viewModelScope.launch {
             val remindAt = Instant.now().plusSeconds(minutes * 60)
@@ -62,4 +68,3 @@ class PlanViewModel(
         }
     }
 }
-

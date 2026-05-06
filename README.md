@@ -33,4 +33,8 @@ Unit testlar:
 
 > Eslatma: loyiha `minSdk=24` bo‘lgani uchun `java.time` ishlashi uchun core library desugaring yoqilgan.
 
-# dailytasks-kotlin
+## Mock REST API
+
+Loyihada Retrofit mock API ishlatiladi. `Bugun` yoki `Reja` ekranidagi menyudan **"Ma'lumotlarni yangilash (mock API)"** ni bosib, ma'lumotlarni API dan Room bazaga yuklashingiz mumkin.
+
+Mock API tashqi servis talab qilmaydi: so'rovlar `MockApiInterceptor` orqali statik JSON bilan javob qaytaradi.

@@ -56,6 +56,13 @@ fun PlanScreen(
                         onDismissRequest = { menuExpanded = false },
                     ) {
                         DropdownMenuItem(
+                            text = { Text("Ma'lumotlarni yangilash (mock API)") },
+                            onClick = {
+                                menuExpanded = false
+                                viewModel.refreshFromRemote()
+                            },
+                        )
+                        DropdownMenuItem(
                             text = { Text("Eslatma: faqat ilova ichida") },
                             onClick = { menuExpanded = false },
                         )
@@ -91,4 +98,3 @@ fun PlanScreen(
         }
     }
 }
-

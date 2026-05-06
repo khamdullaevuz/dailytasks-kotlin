@@ -61,6 +61,8 @@ private class FakeTaskRepository : TaskRepository {
 
     override suspend fun deleteById(id: Long) = Unit
 
+    override suspend fun refreshFromRemote() = Unit
+
     override suspend fun setCompleted(id: Long, completed: Boolean, completedAt: Instant) = Unit
 
     override fun observeNextPendingReminder(): Flow<Task?> = flowOf(null)
@@ -77,4 +79,3 @@ private class FakeTaskRepository : TaskRepository {
 
     override fun observePlannedCountBetween(startDay: LocalDate, endDay: LocalDate): Flow<Int> = flowOf(0)
 }
-

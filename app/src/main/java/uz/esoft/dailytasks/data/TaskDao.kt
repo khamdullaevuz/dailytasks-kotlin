@@ -2,6 +2,7 @@ package uz.esoft.dailytasks.data
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
@@ -60,6 +61,9 @@ interface TaskDao {
 
     @Insert
     suspend fun insert(task: TaskEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(tasks: List<TaskEntity>)
 
     @Update
     suspend fun update(task: TaskEntity)
